@@ -1,6 +1,4 @@
-﻿
-using Anonymazer.Data;
-using Anonymazer.Models;
+﻿using Anonymazer.Models;
 using Anonymazer.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +9,13 @@ namespace Anonymazer.Controllers;
 public class AnonymizationController : ControllerBase
 {
     private readonly AnonymizationService _anonymizationService;
-    private readonly AppDbContext _dbContext;
-
+    private readonly AnonymizationHistoryService _historyService;
     public AnonymizationController(
-        AppDbContext dbContext,
-        AnonymizationService anonymizationService)
+        AnonymizationService anonymizationService,
+        AnonymizationHistoryService historyService)
     {
-        _dbContext = dbContext;
         _anonymizationService = anonymizationService;
+        _historyService = historyService;
     }
 
     [HttpPost]
@@ -35,18 +32,7 @@ public class AnonymizationController : ControllerBase
 
         var result = _anonymizationService.AnonymizeWithStatistics(request.Text);
 
-        var history = new AnonymizationHistory
-        {
-            OriginalText = result.OriginalText,
-            AnonymizedText = result.AnonymizedText,
-            CreatedAt = DateTime.UtcNow,
-            EmailsFound = result.EmailsFound,
-            PhonesFound = result.PhonesFound,
-            PassportsFound = result.PassportsFound
-        };
-
-        _dbContext.AnonymizationHistory.Add(history);
-        await _dbContext.SaveChangesAsync();
+        await _historyService.SaveAsync(result);
 
         return Ok(result);
     }
