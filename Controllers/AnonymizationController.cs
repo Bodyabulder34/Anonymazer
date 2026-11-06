@@ -41,9 +41,19 @@ public class AnonymizationController : ControllerBase
     }
 
     [HttpGet("history")]
-    public async Task<ActionResult<List<AnonymizationHistory>>> GetHistory()
+    public async Task<ActionResult<AnonymizationHistoryPage>> GetHistory(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var history = await _historyService.GetAllAsync();
+        if (page < 1 || pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(new
+            {
+                error = "Некорректные параметры пагинации."
+            });
+        }
+
+        var history = await _historyService.GetPageAsync(page, pageSize);
 
         return Ok(history);
     }
