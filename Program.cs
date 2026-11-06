@@ -14,6 +14,7 @@ builder.Services.AddScoped<IDataDetector, PassportDetector>();
 builder.Services.AddScoped<IDataDetector, PhoneDetector>();
 
 builder.Services.AddScoped<AnonymizationService>();
+builder.Services.AddScoped<AnonymizationHistoryService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
