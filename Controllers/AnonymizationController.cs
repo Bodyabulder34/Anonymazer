@@ -1,4 +1,5 @@
-﻿using Anonymazer.Data;
+﻿
+using Anonymazer.Data;
 using Anonymazer.Models;
 using Anonymazer.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ public class AnonymizationController : ControllerBase
     private readonly AnonymizationService _anonymizationService;
     private readonly AppDbContext _dbContext;
 
-    public AnonymizationController(AppDbContext dbContext)
+    public AnonymizationController(
+        AppDbContext dbContext,
+        AnonymizationService anonymizationService)
     {
         _dbContext = dbContext;
-        _anonymizationService = new AnonymizationService();
+        _anonymizationService = anonymizationService;
     }
 
     [HttpPost]

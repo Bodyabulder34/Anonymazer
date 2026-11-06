@@ -6,12 +6,12 @@ namespace Anonymazer.Services;
 
 public class AnonymizationService
 {
-    private readonly IDataDetector[] _detectors =
+    private readonly IDataDetector[] _detectors;
+
+    public AnonymizationService(IEnumerable<IDataDetector> detectors)
     {
-        new EmailDetector(),
-        new PassportDetector(),
-        new PhoneDetector()
-    };
+        _detectors = detectors.ToArray();
+    }
 
     public AnonymizationResponse AnonymizeWithStatistics(string text)
     {
