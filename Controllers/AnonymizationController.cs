@@ -1,4 +1,5 @@
-﻿using Anonymazer.Models;
+﻿using System.Collections.Generic;
+using Anonymazer.Models;
 using Anonymazer.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,10 +31,21 @@ public class AnonymizationController : ControllerBase
             });
         }
 
+
+
         var result = _anonymizationService.AnonymizeWithStatistics(request.Text);
 
         await _historyService.SaveAsync(result);
 
         return Ok(result);
     }
+
+    [HttpGet("history")]
+    public async Task<ActionResult<List<AnonymizationHistory>>> GetHistory()
+    {
+        var history = await _historyService.GetAllAsync();
+
+        return Ok(history);
+    }
+
 }

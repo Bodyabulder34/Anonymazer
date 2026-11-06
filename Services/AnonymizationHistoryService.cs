@@ -1,6 +1,7 @@
 ﻿using Anonymazer.Data;
 using Anonymazer.Models;
-
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 namespace Anonymazer.Services;
 
 public class AnonymizationHistoryService
@@ -24,8 +25,17 @@ public class AnonymizationHistoryService
             PassportsFound = result.PassportsFound
         };
 
+
         _dbContext.AnonymizationHistory.Add(history);
 
         await _dbContext.SaveChangesAsync();
     }
+    public async Task<List<AnonymizationHistory>> GetAllAsync()
+    {
+        return await _dbContext.AnonymizationHistory
+            .AsNoTracking()
+            .OrderByDescending(history => history.CreatedAt)
+            .ToListAsync();
+    }
+
 }
