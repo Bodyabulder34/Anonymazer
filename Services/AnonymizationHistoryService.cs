@@ -38,4 +38,29 @@ public class AnonymizationHistoryService
             .ToListAsync();
     }
 
+    public async Task<AnonymizationHistoryPage> GetPageAsync(
+    int page,
+    int pageSize)
+    {
+        var query = _dbContext.AnonymizationHistory
+            .AsNoTracking()
+            .OrderByDescending(history => history.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new AnonymizationHistoryPage
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+        };
+    }
+
 }
