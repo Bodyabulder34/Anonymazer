@@ -1,10 +1,10 @@
 ﻿
 using StackExchange.Redis;
 using System.Text.Json;
-
+using Anonymazer.Interfaces;
 namespace Anonymazer.Services;
 
-public class RedisCacheService
+public class RedisCacheService : IRedisCacheService
 {
     private readonly IDatabase _database;
 

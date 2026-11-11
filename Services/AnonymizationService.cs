@@ -1,28 +1,32 @@
-﻿
+﻿using Microsoft.Extensions.Logging;
+using StackExchange.Redis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Anonymazer.Models;
-
+using Anonymazer.Interfaces;
 namespace Anonymazer.Services;
 
 public class AnonymizationService
 {
     private readonly IDataDetector[] _detectors;
-    private readonly RedisCacheService _cacheService;
+    private readonly IRedisCacheService? _cacheService;
+    private readonly ILogger<AnonymizationService>? _logger;
 
     public AnonymizationService(
-        IEnumerable<IDataDetector> detectors,
-        RedisCacheService cacheService)
+    IEnumerable<IDataDetector> detectors,
+    IRedisCacheService? cacheService,
+    ILogger<AnonymizationService>? logger = null)
     {
         _detectors = detectors.ToArray();
         _cacheService = cacheService;
+        _logger = logger;
     }
 
     public AnonymizationService(IEnumerable<IDataDetector> detectors)
     {
         _detectors = detectors.ToArray();
-        _cacheService = null!;
+        _cacheService = null;
     }
 
     public async Task<AnonymizationResponse> AnonymizeWithStatisticsAsync(string text)
@@ -34,20 +38,34 @@ public class AnonymizationService
 
         var cacheKey = $"anonymizer:result:{hash}";
 
-        var cachedResult =
-            await _cacheService.GetAsync<AnonymizationResponse>(cacheKey);
+        if (_cacheService == null)
+            return AnonymizeWithStatistics(text);
 
-        if (cachedResult != null)
-            return cachedResult;
+        try
+        {
+            var cachedResult =
+                await _cacheService.GetAsync<AnonymizationResponse>(cacheKey);
 
-        var result = AnonymizeWithStatistics(text);
+            if (cachedResult != null)
+                return cachedResult;
 
-        await _cacheService.SetAsync(
-            cacheKey,
-            result,
-            TimeSpan.FromMinutes(10));
+            var result = AnonymizeWithStatistics(text);
 
-        return result;
+            await _cacheService.SetAsync(
+                cacheKey,
+                result,
+                TimeSpan.FromMinutes(10));
+
+            return result;
+        }
+        catch (RedisException ex)
+        {
+            _logger?.LogWarning(
+                ex,
+                "Redis is unavailable. Anonymization will continue without cache.");
+
+            return AnonymizeWithStatistics(text);
+        }
     }
 
     public AnonymizationResponse AnonymizeWithStatistics(string text)

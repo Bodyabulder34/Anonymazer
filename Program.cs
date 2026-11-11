@@ -1,17 +1,23 @@
-using StackExchange.Redis;
 using Anonymazer.Data;
+using Anonymazer.Interfaces;
 using Anonymazer.Services;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
-    var configuration = builder.Configuration.GetSection("Redis")["Connection"];
-    return ConnectionMultiplexer.Connect(configuration!);
+    var configuration = builder.Configuration
+        .GetSection("Redis")["Connection"];
+
+    var options = ConfigurationOptions.Parse(configuration!);
+    options.AbortOnConnectFail = false;
+
+    return ConnectionMultiplexer.Connect(options);
 });
 
-builder.Services.AddScoped<RedisCacheService>();
+builder.Services.AddScoped<IRedisCacheService, RedisCacheService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
