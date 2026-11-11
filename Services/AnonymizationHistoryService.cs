@@ -13,6 +13,7 @@ public class AnonymizationHistoryService
         _dbContext = dbContext;
     }
 
+
     public async Task SaveAsync(AnonymizationResponse result)
     {
         var history = new AnonymizationHistory
@@ -20,16 +21,14 @@ public class AnonymizationHistoryService
             OriginalText = result.OriginalText,
             AnonymizedText = result.AnonymizedText,
             CreatedAt = DateTime.UtcNow,
-            EmailsFound = result.EmailsFound,
-            PhonesFound = result.PhonesFound,
-            PassportsFound = result.PassportsFound
+            DetectedCounts = new Dictionary<string, int>(result.DetectedCounts)
         };
-
 
         _dbContext.AnonymizationHistory.Add(history);
 
         await _dbContext.SaveChangesAsync();
     }
+
     public async Task<List<AnonymizationHistory>> GetAllAsync()
     {
         return await _dbContext.AnonymizationHistory

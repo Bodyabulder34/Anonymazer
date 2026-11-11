@@ -37,18 +37,13 @@ namespace Anonymazer.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("EmailsFound")
-                        .HasColumnType("integer");
+                    b.Property<string>("DetectedCounts")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("OriginalText")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("PassportsFound")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PhonesFound")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

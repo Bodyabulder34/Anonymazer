@@ -9,9 +9,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IDataDetector, EmailDetector>();
-builder.Services.AddScoped<IDataDetector, PassportDetector>();
-builder.Services.AddScoped<IDataDetector, PhoneDetector>();
+builder.Services.AddDataDetectors();
 
 builder.Services.AddScoped<AnonymizationService>();
 builder.Services.AddScoped<AnonymizationHistoryService>();

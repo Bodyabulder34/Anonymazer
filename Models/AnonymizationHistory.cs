@@ -1,4 +1,5 @@
-﻿namespace Anonymazer.Models;
+﻿
+namespace Anonymazer.Models;
 
 public class AnonymizationHistory
 {
@@ -10,9 +11,5 @@ public class AnonymizationHistory
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public int EmailsFound { get; set; }
-
-    public int PhonesFound { get; set; }
-
-    public int PassportsFound { get; set; }
+    public Dictionary<string, int> DetectedCounts { get; set; } = new();
 }
