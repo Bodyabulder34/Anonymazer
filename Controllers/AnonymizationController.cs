@@ -33,8 +33,7 @@ public class AnonymizationController : ControllerBase
 
 
 
-        var result = _anonymizationService.AnonymizeWithStatistics(request.Text);
-
+        var result = await _anonymizationService.AnonymizeWithStatisticsAsync(request.Text);
         await _historyService.SaveAsync(result);
 
         return Ok(result);
