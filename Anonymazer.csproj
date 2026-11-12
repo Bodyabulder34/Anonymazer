@@ -20,4 +20,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.3.1" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Compile Remove="Test_Anonymazer/**/*.cs" />
+	</ItemGroup>
+
 </Project>
