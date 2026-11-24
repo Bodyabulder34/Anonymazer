@@ -12,4 +12,8 @@ public class AnonymizationHistory
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public Dictionary<string, int> DetectedCounts { get; set; } = new();
+
+    public int? UserId { get; set; }
+
+    public User? User { get; set; }
 }

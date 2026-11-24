@@ -1,7 +1,8 @@
-﻿using Anonymazer.Data;
+﻿
+using Anonymazer.Data;
 using Anonymazer.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+
 namespace Anonymazer.Services;
 
 public class AnonymizationHistoryService
@@ -13,15 +14,15 @@ public class AnonymizationHistoryService
         _dbContext = dbContext;
     }
 
-
-    public async Task SaveAsync(AnonymizationResponse result)
+    public async Task SaveAsync(AnonymizationResponse result, int userId)
     {
         var history = new AnonymizationHistory
         {
             OriginalText = result.OriginalText,
             AnonymizedText = result.AnonymizedText,
             CreatedAt = DateTime.UtcNow,
-            DetectedCounts = new Dictionary<string, int>(result.DetectedCounts)
+            DetectedCounts = new Dictionary<string, int>(result.DetectedCounts),
+            UserId = userId
         };
 
         _dbContext.AnonymizationHistory.Add(history);
@@ -29,21 +30,16 @@ public class AnonymizationHistoryService
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<List<AnonymizationHistory>> GetAllAsync()
-    {
-        return await _dbContext.AnonymizationHistory
-            .AsNoTracking()
-            .OrderByDescending(history => history.CreatedAt)
-            .ToListAsync();
-    }
-
     public async Task<AnonymizationHistoryPage> GetPageAsync(
-    int page,
-    int pageSize)
+        int userId,
+        int page,
+        int pageSize)
     {
         var query = _dbContext.AnonymizationHistory
             .AsNoTracking()
-            .OrderByDescending(history => history.CreatedAt);
+            .Where(history => history.UserId == userId)
+            .OrderByDescending(history => history.CreatedAt)
+            .ThenByDescending(history => history.Id);
 
         var totalCount = await query.CountAsync();
 
@@ -61,5 +57,4 @@ public class AnonymizationHistoryService
             TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
         };
     }
-
 }

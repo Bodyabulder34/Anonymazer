@@ -1,4 +1,5 @@
-﻿using Anonymazer.Interfaces;
+﻿
+using Anonymazer.Interfaces;
 using StackExchange.Redis;
 
 namespace Anonymazer.Tests;
@@ -12,10 +13,9 @@ public class FakeRedisCacheService : IRedisCacheService
     {
         if (ThrowOnGet)
             throw new RedisConnectionException(
-    ConnectionFailureType.UnableToConnect,
-    "Redis is unavailable",
-    null,
-    CommandStatus.Unknown);
+                ConnectionFailureType.UnableToConnect,
+                CommandFlags.None,
+                "Redis is unavailable");
 
         return Task.FromResult<T?>(default);
     }
@@ -27,10 +27,9 @@ public class FakeRedisCacheService : IRedisCacheService
     {
         if (ThrowOnSet)
             throw new RedisConnectionException(
-    ConnectionFailureType.UnableToConnect,
-    "Redis is unavailable",
-    null,
-    CommandStatus.Unknown);
+                ConnectionFailureType.UnableToConnect,
+                CommandFlags.None,
+                "Redis is unavailable");
 
         return Task.CompletedTask;
     }

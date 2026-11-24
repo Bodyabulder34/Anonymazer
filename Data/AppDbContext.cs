@@ -9,6 +9,8 @@ namespace Anonymazer.Data;
 
 public class AppDbContext : DbContext
 {
+
+    public DbSet<User> Users => Set<User>();
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -20,6 +22,20 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<User>()
+    .HasIndex(user => user.Username)
+    .IsUnique();
+
+        modelBuilder.Entity<User>()
+            .HasIndex(user => user.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<AnonymizationHistory>()
+    .HasOne(history => history.User)
+    .WithMany(user => user.AnonymizationHistory)
+    .HasForeignKey(history => history.UserId)
+    .OnDelete(DeleteBehavior.SetNull);
 
         var property = modelBuilder.Entity<AnonymizationHistory>()
             .Property(history => history.DetectedCounts);

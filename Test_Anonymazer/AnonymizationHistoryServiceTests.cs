@@ -1,4 +1,5 @@
-﻿using Anonymazer.Data;
+﻿
+using Anonymazer.Data;
 using Anonymazer.Models;
 using Anonymazer.Services;
 using Microsoft.EntityFrameworkCore;
@@ -16,21 +17,34 @@ public class AnonymizationHistoryServiceTests
 
         await using var context = new AppDbContext(options);
 
+        var user = new User
+        {
+            Username = "testuser",
+            Email = "test@example.com",
+            PasswordHash = "test-hash"
+        };
+
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+
         context.AnonymizationHistory.AddRange(
             new AnonymizationHistory
             {
+                UserId = user.Id,
                 OriginalText = "oldest",
                 AnonymizedText = "oldest",
                 CreatedAt = DateTime.UtcNow.AddMinutes(-3)
             },
             new AnonymizationHistory
             {
+                UserId = user.Id,
                 OriginalText = "middle",
                 AnonymizedText = "middle",
                 CreatedAt = DateTime.UtcNow.AddMinutes(-2)
             },
             new AnonymizationHistory
             {
+                UserId = user.Id,
                 OriginalText = "newest",
                 AnonymizedText = "newest",
                 CreatedAt = DateTime.UtcNow.AddMinutes(-1)
@@ -41,7 +55,7 @@ public class AnonymizationHistoryServiceTests
 
         var service = new AnonymizationHistoryService(context);
 
-        var result = await service.GetPageAsync(1, 2);
+        var result = await service.GetPageAsync(user.Id, 1, 2);
 
         Assert.Equal(2, result.Items.Count);
         Assert.Equal(3, result.TotalCount);

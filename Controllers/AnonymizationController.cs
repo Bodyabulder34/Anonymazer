@@ -2,11 +2,16 @@
 using Anonymazer.Models;
 using Anonymazer.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Anonymazer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
+[EnableRateLimiting("ApiPolicy")]
 public class AnonymizationController : ControllerBase
 {
     private readonly AnonymizationService _anonymizationService;
@@ -31,10 +36,16 @@ public class AnonymizationController : ControllerBase
             });
         }
 
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdValue, out var userId))
+        {
+            return Unauthorized();
+        }
 
 
         var result = await _anonymizationService.AnonymizeWithStatisticsAsync(request.Text);
-        await _historyService.SaveAsync(result);
+        await _historyService.SaveAsync(result, userId);
 
         return Ok(result);
     }
@@ -44,6 +55,13 @@ public class AnonymizationController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
+        var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!int.TryParse(userIdValue, out var userId))
+        {
+            return Unauthorized();
+        }
+
         if (page < 1 || pageSize < 1 || pageSize > 100)
         {
             return BadRequest(new
@@ -52,7 +70,10 @@ public class AnonymizationController : ControllerBase
             });
         }
 
-        var history = await _historyService.GetPageAsync(page, pageSize);
+        var history = await _historyService.GetPageAsync(
+    userId,
+    page,
+    pageSize);
 
         return Ok(history);
     }
