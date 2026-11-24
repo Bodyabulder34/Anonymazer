@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test_Anonymazer", "Test_Ano
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anonymazer.Tests", "Test_Anonymazer\Anonymazer.Tests.csproj", "{CD996435-F1F8-46F6-AADD-AB3785494199}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anonymazer.Worker", "Anonymazer.Worker\Anonymazer.Worker.csproj", "{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,18 @@ Global
 		{CD996435-F1F8-46F6-AADD-AB3785494199}.Release|x64.Build.0 = Release|Any CPU
 		{CD996435-F1F8-46F6-AADD-AB3785494199}.Release|x86.ActiveCfg = Release|Any CPU
 		{CD996435-F1F8-46F6-AADD-AB3785494199}.Release|x86.Build.0 = Release|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Debug|x64.Build.0 = Debug|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Debug|x86.Build.0 = Debug|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Release|x64.ActiveCfg = Release|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Release|x64.Build.0 = Release|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Release|x86.ActiveCfg = Release|Any CPU
+		{DAE4B709-D4E9-4326-A20B-9F0C7CADBC46}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

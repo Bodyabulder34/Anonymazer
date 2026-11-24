@@ -25,6 +25,10 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 
 builder.Services.AddScoped<IRedisCacheService, RedisCacheService>();
 
+builder.Services.AddSingleton<RabbitMqConnectionService>();
+
+builder.Services.AddScoped<AnonymizationJobService>();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -33,6 +37,8 @@ builder.Services.AddDataDetectors();
 
 builder.Services.AddScoped<AnonymizationService>();
 builder.Services.AddScoped<AnonymizationHistoryService>();
+
+builder.Services.AddScoped<RabbitMqProducer>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -128,10 +134,14 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+var rabbitMq = app.Services.GetRequiredService<RabbitMqConnectionService>();
+
+await rabbitMq.DeclareQueueAsync("anonymization-queue");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(); 
 }
 
 app.UseRouting();

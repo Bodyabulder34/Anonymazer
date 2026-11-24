@@ -19,6 +19,9 @@ public class AppDbContext : DbContext
     public DbSet<AnonymizationHistory> AnonymizationHistory =>
         Set<AnonymizationHistory>();
 
+    public DbSet<AnonymizationJob> AnonymizationJobs =>
+    Set<AnonymizationJob>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
