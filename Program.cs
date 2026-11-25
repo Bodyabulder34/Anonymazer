@@ -12,6 +12,17 @@ using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
     var configuration = builder.Configuration
@@ -134,6 +145,11 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+app.UseRouting();
+
+
+app.UseCors("FrontendPolicy");
+
 var rabbitMq = app.Services.GetRequiredService<RabbitMqConnectionService>();
 
 await rabbitMq.DeclareQueueAsync("anonymization-queue");
@@ -144,7 +160,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(); 
 }
 
-app.UseRouting();
 
 app.UseRateLimiter();
 
